@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quiz: Matemática Discreta Completo</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; margin: 0; color: #333; padding: 15px; box-sizing: border-box; }
+        .quiz-container { background-color: #fff; padding: 25px 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 100%; max-width: 600px; margin-top: 10px; }
+        h1 { text-align: center; color: #2c3e50; font-size: 22px; margin-top: 0; }
+        .question-text { font-size: 16px; margin-bottom: 20px; line-height: 1.5; }
+        .options-container { display: flex; flex-direction: column; gap: 10px; }
+        .option-btn { padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 8px; background-color: #fff; font-size: 15px; cursor: pointer; text-align: left; transition: all 0.2s; -webkit-tap-highlight-color: transparent; }
+        .option-btn:hover:not(:disabled) { background-color: #f8f9fa; border-color: #cbd5e1; }
+        .option-btn:disabled { cursor: not-allowed; opacity: 0.9; }
+        .correct { background-color: #d4edda !important; border-color: #28a745 !important; color: #155724; font-weight: bold; }
+        .wrong { background-color: #f8d7da !important; border-color: #dc3545 !important; color: #721c24; }
+        .feedback-container { margin-top: 20px; padding: 15px; border-radius: 8px; background-color: #e2e3e5; display: none; line-height: 1.5; font-size: 15px; }
+        .nav-btn { margin-top: 20px; padding: 14px 20px; background-color: #007bff; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; width: 100%; display: none; font-weight: bold; }
+        .nav-btn:hover { background-color: #0056b3; }
+        #score-container { text-align: center; display: none; }
+        #score-container h2 { color: #28a745; margin-bottom: 10px; }
+        #score-container p { font-size: 18px; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <div id="quiz-area">
+        <h1>Quiz Interativo</h1>
+        <div id="question-progress" style="margin-bottom: 15px; font-weight: bold; color: #6c757d; font-size: 14px;">Questão 1 de 31</div>
+        <div id="question-text" class="question-text"></div>
+        <div id="options" class="options-container"></div>
+        <div id="feedback" class="feedback-container"></div>
+        <button id="next-btn" class="nav-btn" onclick="nextQuestion()">Próxima Questão</button>
+    </div>
+
+    <div id="score-container">
+        <h2>Fim do Quiz!</h2>
+        <p>Você acertou <strong id="score">0</strong> de <strong id="total">0</strong> questões.</p>
+        <button class="nav-btn" style="display: block; margin-top: 20px;" onclick="location.reload()">Tentar Novamente</button>
+    </div>
+</div>
+
+<script>
+    var questions = [
+        {
+            question: "Uma pesquisa feita com um grupo de 100 alunos da Universidade constatou que 45 deles têm o antígeno A, 41 têm o antígeno B e 12 o antígeno AB. Sendo assim, podemos afirmar que o número de alunos cujo sangue tem o antígeno O é:",
+            options: ["20 alunos", "26 alunos", "34 alunos", "35 alunos", "40 alunos"],
+            answer: 1,
+            explanation: "100 - (45 + 41 - 12) = 26 alunos."
+        },
+        {
+            question: "Considerando cada relação em S × T, onde S=T=ℕ, considere as relações abaixo:<br>I. {(1,2), (1,4), (1,6), (2,3), (4,3)}<br>II. {(9,7), (6,5), (3,6), (8,5)}<br>III. {(12,5), (8,4), (6,3), (7,12)}<br>IV. {(2,7), (8,4), (2,5), (7,6), (10,1)}<br>Assinale a alternativa que classifica corretamente as relações (um-para-um, um-para-vários, vários-para-um, vários-para-vários) respectivamente:",
+            options: ["um-para-um, vários-para-vários, vários-para-um, vários-para-vários", "vários-para-um, um-para-um, um-para-um, vários-para-vários", "vários-para-vários, vários-para-um, um-para-um, um-para-vários", "vários-para-vários, um-para-vários, vários-para-um, um-para-vários", "vários-para-vários, um-para-vários, um-para-vários, um-para-vários"],
+            answer: 2,
+            explanation: "I: vários para vários, II: vários para um, III: um para um, IV: um para vários."
+        },
+        {
+            question: "Considere o conjunto A={1,2,3,4} e observe as partições listadas abaixo:<br>P1={{1, 2}, {1, 3, 4}, {2}}<br>P2={{1,2,3}, {4}}<br>P3={{1,1}, {2,3}, {3,4}}<br>P4={{1}, {2}, {3}, {4}}<br>Quais partições acima não são possíveis para o conjunto A?",
+            options: ["P1 e P3", "P2 e P4", "P1, P2 e P4", "P1 e P2", "P2, P3 e P4"],
+            answer: 0,
+            explanation: "P1 não é partição pois há interseção entre blocos; P3 contém pares ordenados, não subconjuntos de A."
+        },
+        {
+            question: "Suponha que f seja uma função injetora. Se f(3)=15, então podemos afirmar que 2 · f⁻¹(15) + f(3) é igual a:",
+            options: ["45", "43", "25", "21", "15"],
+            answer: 3,
+            explanation: "Como f(3)=15, a inversa f⁻¹(15)=3. Logo, 2(3) + 15 = 21."
+        },
+        {
+            question: "Seja o conjunto A={1,2,3,4,5,6} e a relação binária R={(x,y) ∈ A × A | x-y < 2}. Sejam as seguintes afirmações:<br>I) R é reflexiva.<br>II) R é simétrica.<br>III) R é transitiva.<br>IV) R é antissimétrica.<br>São verdadeiras:",
+            options: ["Somente 1 afirmação é verdadeira", "Somente 2 afirmações são verdadeiras", "Somente 3 afirmações são verdadeiras", "As 4 afirmações são verdadeiras", "Todas são falsas"],
+            answer: 0,
+            explanation: "Somente a afirmação I (reflexiva) é verdadeira. Não é simétrica, nem antissimétrica, nem transitiva em todos os casos."
+        },
+        {
+            question: "Se P={x ∈ ℕ | x é divisor de 12}, Q={x ∈ ℕ | x é divisor de 24} e R={x ∈ ℕ | x é divisor de 36}. Temos as seguintes afirmações:<br>I) P ∩ Q = R<br>II) Q - R = P<br>III) P ∪ R = Q<br>IV) P ∩ Q = P ∩ R<br>São verdadeiras:",
+            options: ["Somente I", "Somente I e II", "Somente II e III", "Somente III e IV", "Somente IV"],
+            answer: 4,
+            explanation: "A interseção dos divisores de 12 e 24 é o conjunto de divisores de 12 (P). A interseção de P e R também é P."
+        },
+        {
+            question: "Assertiva (A): Para provar por indução matemática que uma fórmula é verdadeira para todos os inteiros positivos, deve-se verificar que a fórmula é verdadeira para n=1 e, então, mostrar que se a fórmula é verdadeira para um inteiro n, então é verdadeira para n+1.<br>Razão (R): Se a fórmula é verdadeira para n=1 e a verificação do passo de indução é correta, então a fórmula será verdadeira para todos os inteiros positivos devido ao princípio da indução.",
+            options: ["A é verdadeira e R é verdadeira, e R é uma explicação de A.", "A é verdadeira e R é verdadeira, e R não é uma explicação de A.", "A é falsa e R é verdadeira.", "A é verdadeira e R é falsa.", "A é falsa e R é falsa."],
+            answer: 0,
+            explanation: "A proposição e a razão estão corretas conceitualmente e R explica A."
+        },
+        {
+            question: "Quais das operações a seguir são binárias ou unárias nos conjuntos dados?<br>I) x ∘ y = y - 3, S=ℕ<br>II) x# = |x|, S=ℤ<br>III) x# = x², S=ℤ",
+            options: ["A operação descrita em I é unária e a II é binária.", "A operação descrita em I não é binária e a III é unária.", "A operação descrita em II e III não são operações unárias.", "A operação descrita em III é unária, mas a II não é unária.", "A operação descrita em I é binária, mas a III não é unária."],
+            answer: 1,
+            explanation: "A primeira não é fechada em ℕ pois y-3 pode ser negativo; a terceira é uma operação unária válida."
+        },
+        {
+            question: "Seja A um subconjunto dos Naturais. Assinale V (verdadeiro) ou F (falso):<br>I) Uma relação interna R em A é um subconjunto dos Naturais.<br>II) Uma relação de equivalência tem associada classes de equivalência.<br>III) Uma relação de ordem pode ser representada por um diagrama de Hasse.<br>IV) Uma relação de ordem é reflexiva, simétrica e transitiva.",
+            options: ["V-V-F-F", "V-F-F-F", "V-F-F-V", "F-V-F-F", "F-V-V-F"],
+            answer: 4,
+            explanation: "A IV é falsa porque relação de ordem exige antissimetria, não simetria."
+        },
+        {
+            question: "Considerando a função f(x) = √(-x+2) / (x²-4x-5), é possível afirmar que seu conjunto Domínio é igual a:",
+            options: ["{x ∈ ℝ | -1 < x < 5}", "{x ∈ ℝ | x ≤ 2}", "{x ∈ ℝ | x ≥ -1 e x ≠ 5}", "{x ∈ ℝ | x ≤ 2 e x ≠ -1}", "{x ∈ ℝ | x ≥ 2 e x ≠ 5}"],
+            answer: 3,
+            explanation: "Numerador exige -x+2 ≥ 0 (logo x ≤ 2). Denominador exige x²-4x-5 ≠ 0 (logo x ≠ -1 e x ≠ 5)."
+        },
+        {
+            question: "Considerando todos os anagramas distintos que se pode formar com todas as letras da palavra MATEMÁTICA, a quantidade desses anagramas em que as vogais apareçam todas juntas é igual a:",
+            options: ["6!", "5 × 6!", "61", "10!", "6 × 6!"],
+            answer: 1,
+            explanation: "Considerando o bloco de vogais AAEI (20 permutações) e as demais letras MMTTC, temos 5! arranjos possíveis. Logo, 5 × 6! no total."
+        },
+        {
+            question: "Quais dos seguintes conjuntos é (ou são) vazio(s)?<br>I) A={x ∈ U | x ∉ U}<br>II) B={x ∈ ℤ | x³ = 3}<br>III) C={x ∈ ℝ | 1/x ∈ ℝ}<br>IV) D={x | x é um inteiro par e x²=9}",
+            options: ["Somente I e II", "Somente II, III e IV", "Somente I, II e IV", "Somente III e IV", "Somente IV"],
+            answer: 2,
+            explanation: "A é vazio; B é vazio nos Inteiros; D é vazio pois raiz de 9 é 3 (ímpar)."
+        },
+        {
+            question: "Uma prova com duas questões foi dada a uma classe de 40 alunos. 10 alunos acertaram as duas questões, 25 acertaram a primeira questão e 20 acertaram a segunda questão. Quantos alunos erraram as duas questões?",
+            options: ["5 alunos", "7 alunos", "10 alunos", "12 alunos", "15 alunos"],
+            answer: 0,
+            explanation: "O total que acertou alguma é 25 + 20 - 10 = 35. Logo 40 - 35 = 5 erraram ambas."
+        },
+        {
+            question: "Considerando os conjuntos numéricos, todas estão corretas, EXCETO:",
+            options: ["O conjunto dos Números Reais não contém o conjunto dos Números Racionais.", "Conjunto dos Números Naturais está contido dentro do conjunto dos Números Inteiros.", "Conjunto dos Números Racionais contém o conjunto dos Números Inteiros.", "Entre dois números racionais distintos sempre existe outro número racional.", "Nem todo número Inteiro é Natural."],
+            answer: 0,
+            explanation: "Reais contém os Racionais, logo a afirmação de que não contém está incorreta."
+        },
+        {
+            question: "Sejam f(x)=x/(4-x²) e g(x)=4x. Se h(x)=f(g(x)), então o valor de h(4)/g(1) é:",
+            options: ["-1/13", "-1/48", "-1/27", "-1/63", "4/27"],
+            answer: 3,
+            explanation: "g(1)=4. h(4) = f(g(4)) = f(16) = 16 / (4 - 16²) = 16 / -252 = -4/63. Dividindo por 4 resulta em -1/63."
+        },
+        {
+            question: "Dados os conjuntos A={x ∈ ℕ | x=(2k+1)/4, k ∈ ℕ}, B={x ∈ ℕ | x²-14x+40=0} e C={x ∈ ℕ | x²-1=0}, então o número de elementos do conjunto [(A ∩ B) ∪ C] × (B-C) é:",
+            options: ["0", "1", "2", "3", "4"],
+            answer: 2,
+            explanation: "A é vazio. B = {4, 10}. C={1}. O produto cartesiano será {1} × {4,10}, que possui 2 elementos."
+        },
+        {
+            question: "Sejam A={1,2,3,6,12,18} e a relação 'x divide y' sobre A. Assinale V ou F:<br>I) Os majorantes de {2, 3} são 6 e 12.<br>II) Os minorantes de {2, 3, 6} são 1 e 2.<br>III) O elemento mínimo de A é 1.<br>IV) O elemento máximo de A é 18.<br>V) O supremo do subconjunto {2, 3} é 6.",
+            options: ["V-V-F-F-V", "F-F-V-F-V", "V-F-F-V-F", "F-V-F-F-V", "F-V-V-F-F"],
+            answer: 1,
+            explanation: "I é Falsa porque 18 também é majorante. IV é Falsa porque o conjunto tem elementos maximais 12 e 18, mas não máximo único."
+        },
+        {
+            question: "Uma empresa de 500 funcionários tem 200 que fizeram curso de Primeiros Socorros, 150 de Prevenção de Incêndios e 70 os dois. Quantos não fizeram nenhum dos dois?",
+            options: ["220", "280", "80", "70", "44"],
+            answer: 0,
+            explanation: "500 - (200 + 150 - 70) = 220."
+        },
+        {
+            question: "Com respeito à função f(x)=e⁻²ˣ+2:<br>I) Representa uma parábola.<br>II) É decrescente.<br>III) O valor de f(0) é 2.<br>IV) A imagem são todos reais maiores que 2.<br>São falsas:",
+            options: ["Somente I", "Somente I e III", "Somente II", "Somente II e IV", "Somente IV"],
+            answer: 1,
+            explanation: "I é Falsa pois é exponencial. III é Falsa pois f(0) = 1 + 2 = 3."
+        },
+        {
+            question: "Seja S={1,2,4,6}. Qual das relações dadas é ao mesmo tempo reflexiva, antissimétrica e transitiva?",
+            options: [
+                "R = {(2,4), (4,2), (4,6), (6,4)}",
+                "R = {(1,2), (2,1), (1,1), (2,2)}",
+                "R = {(1,1), (2,2), (4,4), (6,6), (4,6), (6,4)}",
+                "R = {(1,1), (2,2), (4,4), (6,6), (1,2), (2,4), (4,6)}",
+                "R = {(1,1), (1,2), (1,4), (1,6), (2,2), (4,4), (6,6), (2,4), (2,6)}"
+            ],
+            answer: 4,
+            explanation: "A única que atende a reflexividade contendo pares idênticos de todos os elementos e também antissimetria e transitividade."
+        },
+        {
+            question: "Sejam a relação sobre A={1,2,3,4} descrita por R={(1,1), (1,4), (2,3), (3,2), (1,2), (4,3)}. O fecho simétrico (F) de R é:",
+            options: [
+                "F={(4,1), (2,2), (3,2)} ∪ R",
+                "F={(1,3), (2,5), (3,3)} ∪ R",
+                "F={(3,1), (3,4), (2,4)} ∪ R",
+                "F={(4,1), (2,2), (3,3)} ∪ R",
+                "F={(2,1), (4,1), (3,4)} ∪ R"
+            ],
+            answer: 4,
+            explanation: "Para tornar simétrica precisamos adicionar os pares invertidos (2,1), (4,1) e (3,4)."
+        },
+        {
+            question: "Noventa alunos frequentam informática, 70 matemática e 5 não se interessam pelas duas. Se 30 frequentam ambas, quantos alunos há no total?",
+            options: ["115", "125", "135", "145", "155"],
+            answer: 2,
+            explanation: "90 + 70 - 30 + 5 = 135."
+        },
+        {
+            question: "O fecho transitivo em A={0,1,2,3} da relação R={(0,1), (1,1), (1,2), (2,0), (2,2), (3,0)} é:",
+            options: [
+                "{(0,0), (1,1), (2,2), (3,3)}",
+                "R original",
+                "R ∪ {(3,3)}",
+                "R ∪ {(0,2), (0,0), (1,0), (2,1), (3,1), (3,2)}",
+                "Nenhuma das anteriores"
+            ],
+            answer: 3,
+            explanation: "Inclui todos os pares formados pelos caminhos que interligam 0, 1 e 2 fortemente conectados, mais o alcance a partir de 3."
+        },
+        {
+            question: "Em uma pesquisa com 120 pessoas: 65 assistem ao noticiário A, 45 B, 42 C. 20 assistem A e B; 25 A e C; 15 B e C. 8 assistem aos três. Quantos assistem SOMENTE a um noticiário?",
+            options: ["7", "8", "14", "28", "56"],
+            answer: 4,
+            explanation: "Calculando via diagrama de Venn com os 3 conjuntos e subtraindo as interseções, os que assistem apenas 1 somam 56."
+        },
+        {
+            question: "Foi estudado todo conceito de conjuntos numéricos. Sendo assim, considere os conjuntos A={1, 2, 3, 4, 5}; B={4, 5, 6, 7, 8} e C={2, 4, 6, 9, 10}, calcule a quantidade de elementos da união dos conjuntos A, B e C.",
+            options: ["10 elementos", "11 elementos", "12 elementos", "14 elementos", "15 elementos"],
+            answer: 0,
+            explanation: "A união dos três conjuntos resulta em {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}. Contando, temos exatamente 10 elementos únicos."
+        },
+        {
+            question: "Sejam a relação sobre o conjunto A={1, 2, 3, 4} descrita no conjunto R = {(1, 1), (1, 4), (2, 3), (3, 2), (1, 2), (4, 3)}. Quais das seguintes alternativas descreve apropriadamente o fecho transitivo (F) de R?",
+            options: [
+                "F = {(1, 3), (2, 2), (3, 3), (4, 2)} ∪ R",
+                "F = {(1, 3), (2, 2), (3, 3), (2, 4)} ∪ R",
+                "F = {(3, 1), (4, 4), (2, 2), (2, 4)} ∪ R",
+                "F = {(3, 1), (4, 4), (3, 3), (4, 5)} ∪ R",
+                "F = {(2, 1), (4, 1), (2, 3), (3, 4)} ∪ R"
+            ],
+            answer: 0,
+            explanation: "Aplicando a transitividade (se a->b e b->c, adiciona a->c): (1,2) e (2,3) -> (1,3); (2,3) e (3,2) -> (2,2); (3,2) e (2,3) -> (3,3); (4,3) e (3,2) -> (4,2). Logo, adicionamos {(1, 3), (2, 2), (3, 3), (4, 2)} a R."
+        },
+        {
+            question: "Sabendo que A e B são dois conjuntos tais que:<br>1. (1, a) e (b, 3) são elementos de A × B<br>2. A ∩ B = {1, 3}<br>Podemos afirmar com toda segurança que:",
+            options: [
+                "A × B tem 8 elementos",
+                "A × B tem menos de 8 elementos",
+                "A × B tem mais de 8 elementos",
+                "A × B não pode ter 9 elementos",
+                "Nada se pode afirmar sobre o número exato de elementos de A × B"
+            ],
+            answer: 4,
+            explanation: "Sabemos apenas que A tem no mínimo {1, 3} (e possivelmente 'b') e B tem no mínimo {1, 3} (e possivelmente 'a'). O tamanho dos conjuntos vai depender se 'a' e 'b' são iguais a 1, 3 ou a outros números. Portanto, não podemos cravar o tamanho exato."
+        },
+        {
+            question: "Pedro tem uma fazenda e três vacas chegam ao estábulo para ser alimentadas. O estábulo tem cinco manjedouras vagas. De quantos modos distintos elas podem se localizar (supondo que as vacas não podem se mexer de uma manjedoura a outra)?",
+            options: ["20", "40", "50", "60", "74"],
+            answer: 3,
+            explanation: "Trata-se de um problema de Arranjo, pois a ordem e a vaca importam (as vacas são distintas). Arranjo de 5 manjedouras para 3 vacas: A(5,3) = 5 × 4 × 3 = 60 modos distintos."
+        },
+        {
+            question: "Sejam as funções f(x) = 2x + 3 e g(x) = 4x - 1. Assinale a alternativa correta sobre as funções compostas:",
+            options: [
+                "(f ∘ g)(x) = 8x - 2",
+                "(g ∘ f)(x) = 8x + 11",
+                "(f ∘ f)(x) = 4x + 6",
+                "(g ∘ g)(x) = 16x - 4",
+                "f⁻¹(x) = x - 3"
+            ],
+            answer: 1,
+            explanation: "Para calcular (g ∘ f)(x) = g(f(x)), substituímos f(x) em g(x): g(2x + 3) = 4(2x + 3) - 1 = 8x + 12 - 1 = 8x + 11."
+        },
+        {
+            question: "Sejam as relações binárias R e T em um conjunto S. Considere as afirmações:<br>I. Se R e T forem reflexivas, então R ∪ T também é;<br>II. Se R e T forem reflexivas, então R ∩ T também é;<br>III. Se R e T forem simétricas, então R ∩ T também é;<br>IV. Se R e T forem transitivas, então R ∪ T também é.<br>Assinale a alternativa correta:",
+            options: [
+                "I, II e III estão corretas",
+                "I e IV estão corretas",
+                "III e IV estão corretas",
+                "II, III e IV estão corretas",
+                "I, III e IV estão corretas"
+            ],
+            answer: 0,
+            explanation: "I e II são verdadeiras (união e interseção preservam reflexividade). III é verdadeira (interseção preserva a simetria). A IV é Falsa, pois a união de relações transitivas não garante que caminhos intercruzados (um passo em R e outro em T) permaneçam transitivos."
+        },
+        {
+            question: "Seja a relação R = {(x,y) | √x + √y = 1, x, y ∈ ℝ⁺}. E sejam as seguintes afirmações:<br>I) R é reflexiva<br>II) R é simétrica<br>III) R é transitiva<br>IV) R é antissimétrica<br>Sobre a quantidade de afirmações falsas, podemos dizer:",
+            options: [
+                "Somente 1 afirmação é falsa",
+                "Somente 2 afirmações são falsas",
+                "Somente 3 afirmações são falsas",
+                "As 4 afirmações são falsas",
+                "Todas são verdadeiras"
+            ],
+            answer: 2,
+            explanation: "I é Falsa (√x + √x = 1 só vale para x=1/4). II é Verdadeira (√x + √y = √y + √x). III é Falsa (Em geral, falha a não ser que todos os elementos sejam 1/4). IV é Falsa (Exemplo: x=1/9 e y=4/9 dá 1; y=4/9 e x=1/9 também dá 1. Se fosse antissimétrica, x teria que ser igual a y, o que é falso). Portanto, 3 afirmações (I, III e IV) são falsas."
+        }
+    ];
+
+    var currentQuestionIndex = 0;
+    var score = 0;
+
+    function loadQuestion() {
+        var q = questions[currentQuestionIndex];
+        document.getElementById("question-progress").innerText = "Questão " + (currentQuestionIndex + 1) + " de " + questions.length;
+        document.getElementById("question-text").innerHTML = q.question;
+        
+        var optionsContainer = document.getElementById("options");
+        optionsContainer.innerHTML = "";
+        
+        for (var i = 0; i < q.options.length; i++) {
+            (function(index) {
+                var btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerHTML = q.options[index];
+                btn.onclick = function() { checkAnswer(index, btn); };
+                optionsContainer.appendChild(btn);
+            })(i);
+        }
+
+        document.getElementById("feedback").style.display = "none";
+        document.getElementById("next-btn").style.display = "none";
+    }
+
+    function checkAnswer(selectedIndex, btn) {
+        var q = questions[currentQuestionIndex];
+        var buttons = document.querySelectorAll(".option-btn");
+        
+        for (var i = 0; i < buttons.length; i++) {
+            buttons[i].disabled = true;
+        }
+
+        var feedbackBox = document.getElementById("feedback");
+        feedbackBox.style.display = "block";
+
+        if (selectedIndex === q.answer) {
+            btn.classList.add("correct");
+            score++;
+            feedbackBox.innerHTML = "<strong>Resposta Correta! 🎉</strong><br><br>" + q.explanation;
+            feedbackBox.style.backgroundColor = "#d4edda";
+            feedbackBox.style.color = "#155724";
+        } else {
+            btn.classList.add("wrong");
+            buttons[q.answer].classList.add("correct");
+            feedbackBox.innerHTML = "<strong>Resposta Incorreta! ❌</strong><br><br>" + q.explanation;
+            feedbackBox.style.backgroundColor = "#f8d7da";
+            feedbackBox.style.color = "#721c24";
+        }
+
+        document.getElementById("next-btn").style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            window.scrollTo(0, 0);
+            loadQuestion();
+        } else {
+            showScore();
+        }
+    }
+
+    function showScore() {
+        document.getElementById("quiz-area").style.display = "none";
+        var scoreContainer = document.getElementById("score-container");
+        scoreContainer.style.display = "block";
+        document.getElementById("score").innerText = score;
+        document.getElementById("total").innerText = questions.length;
+    }
+
+    // Inicializar
+    window.onload = function() {
+        loadQuestion();
+    };
+</script>
+
+</body>
+</html>
